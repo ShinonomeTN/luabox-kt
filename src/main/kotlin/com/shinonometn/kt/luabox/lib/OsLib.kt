@@ -189,7 +189,8 @@ private fun timeZoneOffset(c: Calendar): Int {
  * @param time0 set the base time of 'clock' function
  * @return a lua function to install this package to lua environment
  */
-fun luaBoxLibOs(systemEnv: Map<String, String> = emptyMap(), time0: Long = System.currentTimeMillis()) = luaBoxPackage("os") { env ->
+@LuaBoxLib
+fun LuaBox.Companion.luaLibOS(systemEnv: Map<String, String> = emptyMap(), time0: Long = System.currentTimeMillis()) = luaBoxPackage("os") { env ->
     val dynamicMethods = mapOf(
         "getenv" to oneArgLuaFunction { (systemEnv[it.checkjstring()] ?: "").toLuaValue() },
         "clock" to zeroArgLuaFunction { ((System.currentTimeMillis() - time0) / 1000.0).toLuaValue() }

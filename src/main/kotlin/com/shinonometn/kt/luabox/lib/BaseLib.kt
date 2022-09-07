@@ -114,27 +114,8 @@ private val staticFunctions = mapOf(
         args.subargs(if (i < 0) n + i + 2 else i + 1)
     },
 
-    "pcall" to noDebugLibProtectedCall()
+    "pcall" to LuaBox.luaFunctionProtectedCallWithoutDebugLib()
 )
-
-private fun standardLuaBoxPrintFunction(stdoutProvider: () -> PrintStream, environment: LuaBoxEnvironment) = varargLuaFunction { args ->
-    val tostring = environment["tostring"].takeUnless { it.isnil() }
-    val stdout = stdoutProvider()
-    var i = 1
-    val n = args.narg()
-    while (i <= n) {
-        if (i > 1) stdout.print('\t')
-        val current = args.arg(i)
-        val s = current.tostring()
-        if (s.isnil()) {
-            val converted = tostring?.call(current) ?: current.tojstring()
-            stdout.println(converted.toString())
-        } else stdout.print(s.toString())
-        i++
-    }
-    stdout.println()
-    LuaValue.NONE
-}
 
 //class ProtectedCallEx(baseLib: RestrictedBaseLib) : VarArgFunction() {
 //    private val globals: Globals = baseLib.globals
@@ -167,24 +148,6 @@ private fun standardLuaBoxPrintFunction(stdoutProvider: () -> PrintStream, envir
 //    }
 //}
 
-fun noDebugLibProtectedCall() = varargLuaFunction { args ->
-    val func = args.checkvalue(1)
-    try {
-        LuaValue.varargsOf(LuaValue.TRUE, func.invoke(args.subargs(2)))
-    } catch (e: LuaBoxEarlyExitException) {
-        throw e
-    } catch (le: LuaError) {
-        val cause = le.cause
-        if (cause != null && cause is LuaBoxEarlyExitException) throw cause
-
-        val m = le.messageObject
-        LuaValue.varargsOf(LuaValue.FALSE, m ?: LuaValue.NIL)
-    } catch (e: Exception) {
-        val m = e.message
-        LuaValue.varargsOf(LuaValue.FALSE, LuaValue.valueOf(m ?: e.toString()))
-    }
-}
-
 //class ProtectedCall(baseLib: RestrictedBaseLib? = null) : VarArgFunction() {
 //    private val globals: Globals? = baseLib?.globals
 //
@@ -215,7 +178,8 @@ private val S_VERSION = "${Lua._VERSION} lua5.2 LuaBoxKt".toLuaValue()
 /**
  * Simple version of lua BaseLib
  */
-fun luaBoxLibBase() = varargLuaFunction {
+@LuaBoxLib
+fun LuaBox.Companion.luaLibBase() = varargLuaFunction {
     val environment = it.arg(2).checktable()
     environment.assertIsEnvironment()
     environment.putAll(mapOf("_G" to environment, "_VERSION" to S_VERSION,) + staticFunctions)

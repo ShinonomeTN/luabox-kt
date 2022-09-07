@@ -39,6 +39,11 @@ fun Map<String, LuaValue>.toLuaTable() = LuaTable().apply { entries.forEach { se
 @JvmName("asLuaTable")
 fun Map<LuaValue, LuaValue>.toLuaTable() = LuaTable().apply { entries.forEach { set(it.key, it.value) } }
 
+fun Collection<Pair<LuaValue, LuaValue>>.toLuaTable() = LuaTable().apply { forEach { (key, value) -> set(key, value) } }
+
+@JvmName("asLuaTable")
+fun Collection<Pair<String, LuaValue>>.toLuaTable() = LuaTable().apply { forEach { (key, value) -> set(key, value) } }
+
 fun luaTableOf() = LuaTable()
 
 fun luaTableOf(vararg entries : Pair<String, LuaValue>) : LuaTable {

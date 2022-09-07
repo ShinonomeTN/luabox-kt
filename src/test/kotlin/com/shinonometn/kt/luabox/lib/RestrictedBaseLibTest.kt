@@ -1,7 +1,7 @@
 package com.shinonometn.kt.luabox.lib
 
 import com.shinonometn.kt.luabox.LuaBox
-import com.shinonometn.kt.luabox.createLuaEnvironment
+import com.shinonometn.kt.luabox.createLuaBoxEnvironment
 import org.junit.Test
 import org.luaj.vm2.LuaError
 import kotlin.test.assertEquals
@@ -13,18 +13,18 @@ class RestrictedBaseLibTest {
 
     @Test
     fun `Test assert true`() {
-        val assertTrue = luabox.load("assert(true)", createLuaEnvironment()).call()
+        val assertTrue = luabox.load("assert(true)", createLuaBoxEnvironment()).call()
         assertTrue(assertTrue.isnil(), "Assert true should pass")
     }
 
     @Test(expected = LuaError::class)
     fun `Test assert false`() {
-        luabox.load("assert(false)", createLuaEnvironment()).call()
+        luabox.load("assert(false)", createLuaBoxEnvironment()).call()
     }
 
     @Test
     fun `Test get and set metatable`() {
-        val global = createLuaEnvironment()
+        val global = createLuaBoxEnvironment()
 
         val value1 = luabox.load("local table = {}; return getmetatable(table)", global).call()
         assertTrue(value1.isnil(), "get table here should returns nil")
@@ -35,13 +35,13 @@ class RestrictedBaseLibTest {
 
     @Test(expected = LuaError::class)
     fun `Test change protected metatable`() {
-        val global = createLuaEnvironment()
+        val global = createLuaBoxEnvironment()
         luabox.load("local table = setmetatable({}, { __metatable = {} }); return setmetatable(table,{})", global).call()
     }
 
     @Test
     fun `Test rawequal`() {
-        val global = createLuaEnvironment()
+        val global = createLuaBoxEnvironment()
         val value1 = luabox.load("local a = {}; local b = a; return rawequal(a,b)", global).call()
         assertTrue(value1.isboolean() && value1.toboolean(), "should returns true")
 
@@ -51,7 +51,7 @@ class RestrictedBaseLibTest {
 
     @Test
     fun `Test rawget`() {
-        val global = createLuaEnvironment()
+        val global = createLuaBoxEnvironment()
         val value1 = luabox.load("""
             a = setmetatable({}, { __index = function(self, key) return 1; end })
             return rawget(a, "a")
@@ -63,7 +63,7 @@ class RestrictedBaseLibTest {
 
     @Test
     fun `Test rawset`() {
-        val global = createLuaEnvironment()
+        val global = createLuaBoxEnvironment()
         val value1 = luabox.load("""
             a = setmetatable({}, { __newindex = function(self, key, value) return 1; end })
             rawset(a, "a", 1)

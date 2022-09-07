@@ -26,7 +26,7 @@ import java.io.InputStream
  *
  * We don't use LuaJ's Globals to do everything because it is ancient and poor of design
  *
- * @see createLuaEnvironment
+ * @see createLuaBoxEnvironment
  */
 class LuaBox private constructor(
     val unDumper: Globals.Undumper? = LoadState.instance,
@@ -110,8 +110,14 @@ class LuaBox private constructor(
     }.toSet()
 
     companion object {
+        /**
+         * Create default lua box
+         */
         fun default() = LuaBox()
 
+        /**
+         * Create lua box without bytecode un-dump ability
+         */
         fun withoutByteCodeLoader() = LuaBox(null)
 
         class LuaBoxConfigurator internal constructor() {
@@ -120,6 +126,9 @@ class LuaBox private constructor(
             var loader : Globals.Loader = LuaC.instance
         }
 
+        /**
+         * Customize lua box configuration
+         */
         fun customized(config : LuaBoxConfigurator.() -> Unit) : LuaBox = LuaBoxConfigurator()
             .apply(config)
             .let { LuaBox(it.unDumper, it.loader, it.compiler) }

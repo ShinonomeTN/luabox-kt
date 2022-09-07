@@ -2,7 +2,7 @@ package com.shinonometn.kt.luabox.lib
 
 import com.shinonometn.kt.luabox.LuaBox
 import com.shinonometn.kt.luabox.LuaBoxEarlyExitException
-import com.shinonometn.kt.luabox.createLuaEnvironment
+import com.shinonometn.kt.luabox.createLuaBoxEnvironment
 import org.junit.Test
 import org.luaj.vm2.LuaError
 import kotlin.test.assertEquals
@@ -13,9 +13,10 @@ class RestrictedOsLibTest {
     @Test
     fun `Test getenv`() {
 
-        val value = luabox.load("require \"os\"; return os.getenv(\"ENV\")", createLuaEnvironment {
-            preloads("os" to luaBoxLibOs(mapOf("ENV" to "VALUE")))
-            allowRequire()
+        val value = luabox.load("""require "os"; return os.getenv("ENV")""", createLuaBoxEnvironment {
+            useRequire(mapOf(
+                "os" to LuaBox.luaLibOS(mapOf("ENV" to "VALUE"))
+            ))
         }).call()
 
         assertEquals("VALUE", value.tojstring(), "Should be 'VALUE'")
@@ -24,9 +25,10 @@ class RestrictedOsLibTest {
     @Test(expected = LuaBoxEarlyExitException::class)
     fun `Test exit`() {
         try {
-            luabox.load("require \"os\"; os.exit(); return os.getenv(\"ENV\")", createLuaEnvironment {
-                preloads("os" to luaBoxLibOs(mapOf("ENV" to "VALUE")))
-                allowRequire()
+            luabox.load("""require "os"; os.exit(); return os.getenv("ENV")""", createLuaBoxEnvironment {
+                useRequire(mapOf(
+                    "os" to LuaBox.luaLibOS(mapOf("ENV" to "VALUE"))
+                ))
             }).call()
         } catch (e: LuaError) {
             val cause = e.cause

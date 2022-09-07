@@ -126,14 +126,17 @@ private fun searchPath(environment: LuaTable) = varargLuaFunction { args ->
 
 /**
  * Provide 'require' and package searching functionalities
+ * @param environment root environment be installed into
+ * @param withPreload optional preloaded packages
  */
-@LuaBoxDsl
-fun luaBoxLibPackage(environment: LuaTable, withPreload: Map<String, LibFunction>) = varargLuaFunction("package") { args ->
+@LuaBoxFunc
+fun LuaBox.Companion.luaFunctionPackageLibLoader(environment: LuaTable, withPreload: Map<String, LibFunction>) = varargLuaFunction("package") {
     val packageTable = luaTableOf(
         S_LOADED to luaTableOf(),
         S_PATH to LuaValue.valueOf("."),
         S_PRELOAD to withPreload.toLuaTable(),
         S_LOAD_LIB to dummyLoadLib,
+        S_SEARCH_PATH to searchPath(environment)
     )
 
     packageTable[S_SEARCHERS] = luaListOf(preloadSearcher(packageTable, environment), luaFileSearcher(packageTable, environment))
