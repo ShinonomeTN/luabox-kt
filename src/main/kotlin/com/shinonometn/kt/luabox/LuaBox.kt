@@ -6,6 +6,28 @@ import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 
+/**
+ * Providing Lua compile functionalities
+ * All lua code fragments should be compiled by LuaBox before running.
+ *
+ * The simplest usage:
+ * ```kotlin
+ * val luabox = LuaBox.default()
+ * val result = luabox.load("return 1 + 1", createLuaEnvironment()).call()
+ * ```
+ *
+ * In LuaBox, every lua execution should follow this steps:
+ * 1. Grab some codes.
+ * 2. Compile it via LuaBox with a LuaEnvironment
+ * 3. Call and get the result
+ *
+ * LuaEnvironment can be used as many times as you want, but be reminded that it's
+ * same effect as running codes in a same lua console.
+ *
+ * We don't use LuaJ's Globals to do everything because it is ancient and poor of design
+ *
+ * @see createLuaEnvironment
+ */
 class LuaBox private constructor(
     val unDumper: Globals.Undumper? = LoadState.instance,
     val loader: Globals.Loader = LuaC.instance,

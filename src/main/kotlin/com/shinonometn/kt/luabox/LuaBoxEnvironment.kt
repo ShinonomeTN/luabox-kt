@@ -35,6 +35,9 @@ fun LuaTable.registerPackage(name: String, table: LuaValue): LuaValue {
     return table
 }
 
+/**
+ * Create a lua environment, the GLOBAL of a lua fragment.
+ */
 @LuaBoxDsl
 fun createLuaEnvironment(configuration: (LuaBoxEnvironmentConfiguration.() -> Unit)? = null): LuaBoxEnvironment {
     val conf = LuaBoxEnvironmentConfiguration().also { configuration?.invoke(it) }
