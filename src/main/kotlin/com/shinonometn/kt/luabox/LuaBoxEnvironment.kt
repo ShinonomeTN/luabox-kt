@@ -33,7 +33,9 @@ class LuaBoxEnvironmentConfiguration internal constructor() {
      * @param stdin given a output
      */
     @LuaBoxDsl
-    fun standardPrintTo(stdin: PrintStream) = initialValue("print") { LuaBox.luaFunctionStandardPrint({ stdin }, it) }
+    fun standardPrintTo(stdin: PrintStream) = initialValue("print") {
+        LuaBox.luaFunctionStandardPrint({ stdin }, it)
+    }
 
     internal val actions = mutableListOf<(LuaBoxEnvironment) -> Unit>(
         { it.load(LuaBox.luaLibBase()) }
@@ -47,7 +49,9 @@ class LuaBoxEnvironmentConfiguration internal constructor() {
      * @param withPreloads add those package loaders to preload table, key is package name
      */
     @LuaBoxDsl
-    fun useRequire(withPreloads : Map<String, LibFunction> = emptyMap()) = initialAction { LuaBox.luaFunctionPackageLibLoader(it, withPreloads) }
+    fun useRequire(withPreloads : Map<String, LibFunction> = emptyMap()) = initialAction {
+        LuaBox.luaFunctionPackageLibLoader(it, withPreloads).invoke()
+    }
 
     /**
      * Allow to use preloaded packages
@@ -75,7 +79,7 @@ fun LuaTable.registerPackage(name: String, table: LuaValue): LuaValue {
 }
 
 /**
- * Create a lua environment, the GLOBAL of a lua fragment.
+ * Create a lua environment, the GLOBAL for a lua fragment.
  */
 @LuaBoxDsl
 fun createLuaBoxEnvironment(configuration: (LuaBoxEnvironmentConfiguration.() -> Unit)? = null): LuaBoxEnvironment {
