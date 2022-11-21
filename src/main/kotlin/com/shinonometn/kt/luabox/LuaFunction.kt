@@ -8,21 +8,6 @@ import org.luaj.vm2.lib.TwoArgFunction
 import org.luaj.vm2.lib.VarArgFunction
 import org.luaj.vm2.lib.ZeroArgFunction
 
-@Deprecated("Use LuaBoxJavaFunction instead", ReplaceWith("LuaBoxJavaFunction"), DeprecationLevel.ERROR)
-typealias VarArgFunction = VarArgFunction
-
-@Deprecated("Use LuaBoxJavaFunction instead", ReplaceWith("LuaBoxJavaFunction"), DeprecationLevel.ERROR)
-typealias ZeroArgFunction = ZeroArgFunction
-
-@Deprecated("Use LuaBoxJavaFunction instead", ReplaceWith("LuaBoxJavaFunction"), DeprecationLevel.ERROR)
-typealias OneArgFunction = OneArgFunction
-
-@Deprecated("Use LuaBoxJavaFunction instead", ReplaceWith("LuaBoxJavaFunction"), DeprecationLevel.ERROR)
-typealias TwoArgFunction = TwoArgFunction
-
-@Deprecated("Use LuaBoxJavaFunction instead", ReplaceWith("LuaBoxJavaFunction"), DeprecationLevel.ERROR)
-typealias TreeArgFunction = ThreeArgFunction
-
 open class LuaBoxJavaFunction(
     private val name: String = "JavaFunction",
     private val implementation: LuaBoxJavaFunction.(Varargs) -> Varargs = { NIL }
