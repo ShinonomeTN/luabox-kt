@@ -14,6 +14,7 @@ class RestrictedOsLibTest {
     fun `Test getenv`() {
 
         val value = luabox.load("""require "os"; return os.getenv("ENV")""", createLuaBoxEnvironment {
+            useBaseLib()
             useRequire(mapOf(
                 "os" to LuaBox.luaLibOS(mapOf("ENV" to "VALUE"))
             ))
@@ -26,6 +27,7 @@ class RestrictedOsLibTest {
     fun `Test exit`() {
         try {
             luabox.load("""require "os"; os.exit(); return os.getenv("ENV")""", createLuaBoxEnvironment {
+                useBaseLib()
                 useRequire(mapOf(
                     "os" to LuaBox.luaLibOS(mapOf("ENV" to "VALUE"))
                 ))

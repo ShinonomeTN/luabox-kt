@@ -1,7 +1,6 @@
 package com.shinonometn.kt.luabox
 
 import org.junit.Test
-import org.luaj.vm2.LuaError
 import org.luaj.vm2.LuaValue
 import java.io.ByteArrayInputStream
 import java.util.concurrent.Executors
