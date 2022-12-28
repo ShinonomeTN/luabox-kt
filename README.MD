@@ -2,6 +2,9 @@
 
 Lua runtime on JVM written in Kotlin. Based on LuaJ.
 
+LuaBox has two parts: Core and Libs. Core only containing the language runtime itself; Libs containing the standard
+library for the runtime (still under development)
+
 ## Usage
 
 ```kotlin
