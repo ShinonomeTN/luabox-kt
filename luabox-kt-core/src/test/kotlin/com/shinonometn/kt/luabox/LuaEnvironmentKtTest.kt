@@ -7,7 +7,7 @@ import java.util.concurrent.Executors
 import kotlin.random.Random
 import kotlin.test.assertEquals
 
-internal class LuaEnvironmentKtTest{
+internal class LuaEnvironmentKtTest {
 
     private val luabox = LuaBox.default()
 
@@ -22,11 +22,14 @@ internal class LuaEnvironmentKtTest{
         val environment = createLuaBoxEnvironment {
             initialAction { it["a"] = LuaValue.valueOf(1) }
             initialValue("b", LuaValue.valueOf(2))
-            initialValues("c" to LuaValue.valueOf(3), "d" to LuaValue.valueOf(4))
+            initialValues(
+                "c" to LuaValue.valueOf(3),
+                "d" to LuaValue.valueOf(4)
+            )
             initialValueProviders("e" to { LuaValue.valueOf(5) }, "f" to { LuaValue.valueOf(6) })
         }
 
-        listOf("a" to 1, "b" to 2, "c" to 3, "d" to 4, "e" to 5, "f" to 6).forEach {(key, expected) ->
+        listOf("a" to 1, "b" to 2, "c" to 3, "d" to 4, "e" to 5, "f" to 6).forEach { (key, expected) ->
             assertEquals(expected, environment[key].checkint(), "Check for $key:$expected failed.")
         }
     }

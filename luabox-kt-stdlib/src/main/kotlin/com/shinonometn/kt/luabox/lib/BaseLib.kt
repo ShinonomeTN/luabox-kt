@@ -3,7 +3,6 @@ package com.shinonometn.kt.luabox.lib
 import com.shinonometn.kt.luabox.*
 import org.luaj.vm2.*
 import org.luaj.vm2.lib.BaseLib
-import java.io.PrintStream
 
 /*
  * Re-implementation of BaseLib functions
@@ -148,32 +147,12 @@ private val staticFunctions = mapOf(
 //    }
 //}
 
-//class ProtectedCall(baseLib: RestrictedBaseLib? = null) : VarArgFunction() {
-//    private val globals: Globals? = baseLib?.globals
-//
-//    override fun invoke(args: Varargs): Varargs {
-//        val func = args.checkvalue(1)
-//        if (globals?.debuglib != null) globals.debuglib.onCall(this)
-//        return try {
-//            varargsOf(TRUE, func.invoke(args.subargs(2)))
-//        } catch (e: LuaBoxEarlyExitException) {
-//            throw e
-//        } catch (le: LuaError) {
-//            val cause = le.cause
-//            if (cause != null && cause is LuaBoxEarlyExitException) throw cause
-//
-//            val m = le.messageObject
-//            varargsOf(FALSE, m ?: NIL)
-//        } catch (e: Exception) {
-//            val m = e.message
-//            varargsOf(FALSE, valueOf(m ?: e.toString()))
-//        } finally {
-//            if (globals?.debuglib != null) globals.debuglib.onReturn()
-//        }
-//    }
-//}
-
-private val S_VERSION = "${Lua._VERSION} lua5.2 LuaBoxKt".toLuaValue()
+/** The LuaBox version string */
+private val LUABOX_VERSION_STRING = listOf(
+    { System.getProperty("com.shinonometn.luabox.version_string").takeUnless { it.isNullOrBlank() } },
+    { System.getenv("LUABOX_KT_VERSION_STRING").takeUnless { it.isNullOrBlank() } },
+    { "${Lua._VERSION} lua5.2 LuaBoxKt" }
+).firstNotNullOf { it() }.toLuaValue()
 
 /**
  * Simple version of lua BaseLib
@@ -182,7 +161,7 @@ private val S_VERSION = "${Lua._VERSION} lua5.2 LuaBoxKt".toLuaValue()
 fun LuaBox.Companion.luaLibBase() = varargLuaFunction {
     val environment = it.arg(2).checktable()
     environment.assertIsEnvironment()
-    environment.putAll(mapOf("_G" to environment, "_VERSION" to S_VERSION,) + staticFunctions)
+    environment.putAll(mapOf("_G" to environment, "_VERSION" to LUABOX_VERSION_STRING) + staticFunctions)
     environment
 }
 

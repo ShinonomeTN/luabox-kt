@@ -59,12 +59,14 @@ fun createLuaBoxEnvironment(configuration: (LuaBoxEnvironmentConfiguration.() ->
     val conf = LuaBoxEnvironmentConfiguration().also { configuration?.invoke(it) }
     val environment = LuaBoxEnvironment()
 
+    // Invoke value providers, set values into the global
     if (conf.valueProviders.isNotEmpty()) {
         val keyValues = conf.valueProviders.entries.map { (key, provider) -> key to provider(environment) }
         keyValues.forEach { environment[it.first] = it.second }
     }
 
-    if (conf.actions.isNotEmpty()) conf.actions.forEach { it(environment) }
+    // Do additional environment modifications
+    conf.actions.forEach { it(environment) }
 
     return environment
 }
